@@ -11,6 +11,7 @@ type Route =
    | About
    | Posts 
    | Post Post.PostId
+   | NewPost
 
 
 parseUrl : Url.Url -> Route
@@ -30,6 +31,7 @@ matchRoute =
       , Parser.map About ( Parser.s "about" )
       , Parser.map Posts ( Parser.s "posts" )
       , Parser.map Post ( Parser.s "posts" </> Post.idParser )
+      , Parser.map NewPost ( Parser.s "posts" </> Parser.s "new" )
       ]
 
 pushUrl : Route -> Nav.Key -> Cmd msg
@@ -54,3 +56,6 @@ routeToString route =
       
       Post postId -> 
          "/posts/" ++ Post.idToString postId
+      
+      NewPost ->
+         "/posts/new"

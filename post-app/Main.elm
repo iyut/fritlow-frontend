@@ -3,9 +3,11 @@ module Main exposing (main)
 import Browser
 import Browser.Navigation as Nav
 import Html exposing (..)
+
 import Page.About as About
 import Page.ListPosts as ListPosts
 import Page.EditPost as EditPost
+import Page.NewPost as NewPost
 import Post
 import Route
 import Url
@@ -42,6 +44,7 @@ type Page
     | AboutPage About.Model
     | ListPage ListPosts.Model
     | EditPage EditPost.Model
+    | NewPage NewPost.Model
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -87,6 +90,14 @@ initCurrentPage ( model, existingCmds ) =
                         EditPost.init postId model.navKey
                   in
                      ( EditPage pageModel, Cmd.map EditPageMsg pageCmd )
+               
+               Route.NewPost ->
+                  let
+                      ( pageModel, pageCmd ) =
+                        NewPost.init model.navKey
+                  in
+                     ( NewPage pageModel, Cmd.map NewPageMsg pageCmd )
+                  
                   
 
 
@@ -105,6 +116,7 @@ type Msg
     | LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
     | EditPageMsg EditPost.Msg
+    | NewPageMsg NewPost.Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -145,6 +157,15 @@ update msg model =
             in
                ( { model | page = EditPage updatedPageModel }
                , Cmd.map EditPageMsg updatedCmd
+               )
+         
+         ( NewPageMsg subMsg, NewPage pageModel ) ->
+            let
+               ( updatedPageModel, updatedCmd ) = 
+                  NewPost.update subMsg pageModel    
+            in
+               ( { model | page = NewPage updatedPageModel }
+               , Cmd.map NewPageMsg updatedCmd
                )
 
          ( _, _ ) ->
@@ -191,6 +212,10 @@ currentView model =
       EditPage pageModel ->
          EditPost.view pageModel
             |> Html.map EditPageMsg
+      
+      NewPage pageModel ->
+         NewPost.view pageModel
+            |> Html.map NewPageMsg
       
 
 

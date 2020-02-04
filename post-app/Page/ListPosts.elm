@@ -8,7 +8,7 @@ import Json.Decode as Decode
 import RemoteData
 
 import Post
-import Error exposing (buildErrorMessage)
+import Error
 
 
 
@@ -16,19 +16,26 @@ import Error exposing (buildErrorMessage)
 
 type alias Model =
     { posts : RemoteData.WebData (List Post.Post)
+    , deleteError : Maybe String
     }
 
 
 type Msg
     = FetchPosts
     | PostsReceived ( RemoteData.WebData (List Post.Post))
+    | DeletePost Post.PostId
+    | PostDeleted ( Result Http.Error String )
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { posts = RemoteData.Loading }, fetchPosts )
+    ( initialModel, fetchPosts )
 
-
+initialModel : Model
+initialModel = 
+   { posts = RemoteData.Loading
+   , deleteError = Nothing 
+   }
 
 -- UPDATE 
 
@@ -41,6 +48,17 @@ fetchPosts =
                 |> Http.expectJson (RemoteData.fromResult >> PostsReceived)
         }
 
+deletePost : Post.PostId -> Cmd Msg 
+deletePost postId =
+   Http.request
+      { method = "DELETE"
+      , headers = []
+      , url = "http://localhost:5019/posts/" ++ Post.idToString postId
+      , body = Http.emptyBody
+      , expect = Http.expectString PostDeleted
+      , timeout = Nothing
+      , tracker = Nothing  
+      }
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -50,6 +68,17 @@ update msg model =
 
          PostsReceived response ->
             ( { model | posts = response }, Cmd.none )
+         
+         DeletePost postId -> 
+            ( model, deletePost postId )
+         
+         PostDeleted ( Ok _ ) ->
+            ( model, fetchPosts )
+         
+         PostDeleted ( Err error ) -> 
+            ( { model | deleteError = Just ( Error.buildErrorMessage error ) }
+            , Cmd.none
+            )
 
 
 
@@ -58,11 +87,16 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ button [ onClick FetchPosts ]
-            [ text "Refresh posts" ]
-        , viewPosts model.posts
-        ]
+   div []
+      [ button [ onClick FetchPosts ]
+         [ text "Refresh posts" ]
+      , br [] []
+      , br [] []
+      , a [ href "/posts/new" ]
+         [ text "Add New Post" ]
+      , viewPosts model.posts
+      , viewDeleteError model.deleteError
+   ]
 
 
 viewPosts : RemoteData.WebData (List Post.Post) -> Html Msg
@@ -82,20 +116,21 @@ viewPosts posts =
                 ]
 
         RemoteData.Failure httpError ->
-            viewFetchError (buildErrorMessage httpError)
+            viewFetchError (Error.buildErrorMessage httpError)
 
 
 viewTableHeader : Html Msg
 viewTableHeader =
-    tr []
-        [ th []
-            [ text "ID" ]
-        , th []
-            [ text "Title" ]
-        , th []
-            [ text "Author" ]
-         , th [] [ text "Action" ]
-        ]
+   tr []
+      [ th []
+         [ text "ID" ]
+      , th []
+         [ text "Title" ]
+      , th []
+         [ text "Author" ]
+      , th [] [ text "Action" ]
+      , th [] [ text "" ]
+      ]
 
 
 viewPost : Post.Post -> Html Msg
@@ -111,8 +146,11 @@ viewPost post =
             [ text post.title ]
         , td []
             [ a [ href post.authorUrl ] [ text post.authorName ] ]
-         , td[]
-            [ a [ href postPath ] [ text "edit" ]]
+         , td []
+            [ a [ href postPath ] [ text "edit" ] ]
+         , td []
+            [ button [ type_ "button", onClick ( DeletePost post.id ) ] [ text "Delete" ]
+            ]
       ]
 
 
@@ -126,3 +164,15 @@ viewFetchError errorMessage =
         [ h3 [] [ text errorHeading ]
         , text ("Error: " ++ errorMessage)
         ]
+
+viewDeleteError : Maybe String -> Html msg
+viewDeleteError maybeError = 
+   case maybeError of 
+      Just error ->
+         div []
+            [ h3 [] [ text "Couldn't delete the post this time." ]
+            , text ( "Error: " ++ error )
+            ]
+      
+      Nothing ->
+         text ""
