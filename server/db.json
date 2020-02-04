@@ -1,0 +1,26 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "json-server test",
+      "authorName": "typicode",
+      "authorUrl": "typicode.com"
+    },
+    {
+      "id": 2,
+      "title": "http-server",
+      "authorName": "indexzero",
+      "authorUrl": "indexzero.com"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  }
+}
