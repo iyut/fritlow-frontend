@@ -7799,10 +7799,143 @@ var $author$project$Main$currentView = function (model) {
 				$author$project$Page$NewPost$view(pageModel));
 	}
 };
+var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
+var $author$project$Template$Header$logoUrl = '';
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $author$project$Template$Header$viewLogo = function (logo) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('logo-container'),
+				$elm$html$Html$Attributes$id('logo-container')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href('#'),
+						$elm$html$Html$Attributes$class('logo-link')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$img,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$src(logo),
+								$elm$html$Html$Attributes$class('logo-img')
+							]),
+						_List_Nil)
+					]))
+			]));
+};
+var $elm$html$Html$span = _VirtualDom_node('span');
+var $author$project$Template$Header$menus = _List_fromArray(
+	[
+		{link: '/', parent: '', slug: 'home', title: 'Home'},
+		{link: '/about', parent: '', slug: 'about', title: 'About'},
+		{link: '/posts', parent: '', slug: 'posts', title: 'Posts'}
+	]);
+var $elm$html$Html$ul = _VirtualDom_node('ul');
+var $elm$html$Html$li = _VirtualDom_node('li');
+var $author$project$Template$Header$viewMenuList = function (menu) {
+	var linkClass = 'menu-link-' + menu.slug;
+	var liClass = 'menu-' + menu.slug;
+	return A2(
+		$elm$html$Html$li,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class(liClass)
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href(menu.link),
+						$elm$html$Html$Attributes$class(linkClass)
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(menu.title)
+					]))
+			]));
+};
+var $author$project$Template$Header$viewMenu = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('nav-menu'),
+				$elm$html$Html$Attributes$id('nav-menu')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$ul,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('nav-menu-list'),
+						$elm$html$Html$Attributes$id('nav-menu-list')
+					]),
+				A2($elm$core$List$map, $author$project$Template$Header$viewMenuList, $author$project$Template$Header$menus))
+			]));
+};
+var $author$project$Template$Header$viewNav = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('nav-container'),
+				$elm$html$Html$Attributes$id('nav-container')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href('#'),
+						$elm$html$Html$Attributes$class('nav-toggle')
+					]),
+				_List_fromArray(
+					[
+						A2($elm$html$Html$span, _List_Nil, _List_Nil)
+					])),
+				$author$project$Template$Header$viewMenu(model)
+			]));
+};
+var $author$project$Template$Header$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('header-container'),
+				$elm$html$Html$Attributes$id('header-container')
+			]),
+		_List_fromArray(
+			[
+				$author$project$Template$Header$viewLogo($author$project$Template$Header$logoUrl),
+				$author$project$Template$Header$viewNav(model)
+			]));
+};
 var $author$project$Main$view = function (model) {
+	var headerModel = {navKey: model.navKey, route: model.route};
 	return {
 		body: _List_fromArray(
 			[
+				$author$project$Template$Header$view(headerModel),
 				$author$project$Main$currentView(model)
 			]),
 		title: 'Post App'

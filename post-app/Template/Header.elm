@@ -1,14 +1,17 @@
-module Template.Header exposing (..)
+module Template.Header exposing ( Model, Menu, Msg, view )
 
+import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
 
+import Route
+
 -- MODEL
+
 type alias Model =
-   { activeMenu : String
-   , logoUrl : String 
-   , menus : List Menu
-   }
+    { route : Route.Route
+    , navKey : Nav.Key
+    }
 
 type alias Menu = 
    { title : String
@@ -17,41 +20,46 @@ type alias Menu =
    , parent : String
    }
 
-init : ( Model, Cmd Msg )
-init = (
-   { activeMenu = ""
-   , logoUrl = ""
-   , menus = 
-      [  { title = "Home"
-         , link = "/home"
-         , slug = "home"
-         , parent = ""
-         }
-      ,  { title = "About"
-         , link = "/about"
-         , slug = "about"
-         , parent = ""
-         }
-      ]
-   }, Cmd.none )
+logoUrl : String
+logoUrl = ""
+
+menus : List Menu
+menus = 
+    [ { title = "Home"
+      , link = "/"
+      , slug = "home"
+      , parent = ""
+      }
+    , { title = "About"
+      , link = "/about"
+      , slug = "about"
+      , parent = ""
+      }
+    , { title = "Posts"
+      , link = "/posts"
+      , slug = "posts"
+      , parent = ""
+      }
+    ]
+
 
 -- UPDATE 
 type Msg = 
    MenuClicked
 
 --VIEW
-view : Model -> Html Msg
+view : Model -> Html msg
 view model = 
    div [ class "header-container", id "header-container" ] 
-      [ viewLogo model
+      [ viewLogo logoUrl
       , viewNav model
       ]
 
-viewLogo : Model -> Html msg 
-viewLogo model = 
+viewLogo : String -> Html msg 
+viewLogo logo = 
    div [ class "logo-container", id "logo-container" ]
       [ a [ href "#", class "logo-link" ] 
-         [ img [ src model.logoUrl, class "logo-img" ] []
+         [ img [ src logo, class "logo-img" ] []
          ]
       ]
 
@@ -66,12 +74,10 @@ viewNav model =
 
 viewMenu : Model -> Html msg 
 viewMenu model = 
+   
    div [ class "nav-menu", id "nav-menu"] 
       [ ul [ class "nav-menu-list", id "nav-menu-list" ] 
-         [ 
-
-         ]
-
+         ( List.map viewMenuList menus )
       ]
 
 viewMenuList : Menu -> Html msg 
@@ -80,8 +86,7 @@ viewMenuList menu =
        liClass = "menu-" ++ menu.slug
        linkClass = "menu-link-" ++ menu.slug
    in
-   
-   li [ class liClass ] 
-      [ a [ href menu.link, class linkClass ]
-         [ text menu.title ]
-      ]
+        li [ class liClass ] 
+            [ a [ href menu.link, class linkClass ]
+                [ text menu.title ]
+            ]

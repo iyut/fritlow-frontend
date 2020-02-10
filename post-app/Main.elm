@@ -4,6 +4,8 @@ import Browser
 import Browser.Navigation as Nav
 import Html exposing (..)
 
+import Template.Header as Header 
+
 import Page.About as About
 import Page.ListPosts as ListPosts
 import Page.EditPost as EditPost
@@ -37,6 +39,8 @@ type alias Model =
     , navKey : Nav.Key
     }
 
+type Template
+    = Header Header.Model
 
 type Page
     = NotFoundPage
@@ -56,7 +60,7 @@ init flags url navKey =
             , navKey = navKey
             }
     in
-    initCurrentPage ( model, Cmd.none )
+        initCurrentPage ( model, Cmd.none )
 
 
 initCurrentPage : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
@@ -64,47 +68,45 @@ initCurrentPage ( model, existingCmds ) =
     let
         ( currentPage, mappedPageCmds ) =
             case model.route of
-               Route.NotFound ->
-                  ( NotFoundPage, Cmd.none )
-               
-               Route.Home ->
-                  ( HomePage, Cmd.none )
-               
-               Route.About ->
-                  let
-                     ( pageModel, pageCmds ) = 
-                        About.init    
-                  in
-                     ( AboutPage pageModel, Cmd.none )
+                Route.NotFound ->
+                    ( NotFoundPage, Cmd.none )
+                
+                Route.Home ->
+                    ( HomePage, Cmd.none )
+                
+                Route.About ->
+                    let
+                        ( pageModel, pageCmds ) = 
+                            About.init    
+                    in
+                        ( AboutPage pageModel, Cmd.none )
 
-               Route.Posts ->
-                  let
-                     ( pageModel, pageCmds ) =
-                        ListPosts.init
-                  in
-                     ( ListPage pageModel, Cmd.map ListPageMsg pageCmds )
-               
-               Route.Post postId ->
-                  let
-                      ( pageModel, pageCmd ) =
-                        EditPost.init postId model.navKey
-                  in
-                     ( EditPage pageModel, Cmd.map EditPageMsg pageCmd )
-               
-               Route.NewPost ->
-                  let
-                      ( pageModel, pageCmd ) =
-                        NewPost.init model.navKey
-                  in
-                     ( NewPage pageModel, Cmd.map NewPageMsg pageCmd )
+                Route.Posts ->
+                    let
+                        ( pageModel, pageCmds ) =
+                            ListPosts.init
+                    in
+                        ( ListPage pageModel, Cmd.map ListPageMsg pageCmds )
+                
+                Route.Post postId ->
+                    let
+                        ( pageModel, pageCmd ) =
+                            EditPost.init postId model.navKey
+                    in
+                        ( EditPage pageModel, Cmd.map EditPageMsg pageCmd )
+                
+                Route.NewPost ->
+                    let
+                        ( pageModel, pageCmd ) =
+                            NewPost.init model.navKey
+                    in
+                        ( NewPage pageModel, Cmd.map NewPageMsg pageCmd )
                   
                   
-
-
-    in
-    ( { model | page = currentPage }
-    , Cmd.batch [ existingCmds, mappedPageCmds ]
-    )
+   in
+      ( { model | page = currentPage }
+      , Cmd.batch [ existingCmds, mappedPageCmds ]
+      )
 
 
 
@@ -112,11 +114,11 @@ initCurrentPage ( model, existingCmds ) =
 -- UPDATE 
 
 type Msg
-    = ListPageMsg ListPosts.Msg
-    | LinkClicked Browser.UrlRequest
-    | UrlChanged Url.Url
-    | EditPageMsg EditPost.Msg
-    | NewPageMsg NewPost.Msg
+   = ListPageMsg ListPosts.Msg
+   | LinkClicked Browser.UrlRequest
+   | UrlChanged Url.Url
+   | EditPageMsg EditPost.Msg
+   | NewPageMsg NewPost.Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -126,9 +128,9 @@ update msg model =
                 ( updatedPageModel, updatedCmd ) =
                     ListPosts.update subMsg pageModel
             in
-            ( { model | page = ListPage updatedPageModel }
-            , Cmd.map ListPageMsg updatedCmd
-            )
+                ( { model | page = ListPage updatedPageModel }
+                , Cmd.map ListPageMsg updatedCmd
+                )
 
          ( LinkClicked urlRequest, _ ) ->
             case urlRequest of
@@ -182,14 +184,22 @@ subscriptions _ =
 
 
 
-
-
 -- VIEW
 
 view : Model -> Browser.Document Msg
 view model =
+    let
+        headerModel = 
+            { route = model.route
+            , navKey = model.navKey
+            }
+    in
+    
     { title = "Post App"
-    , body = [ currentView model ]
+    , body = 
+      [ Header.view headerModel 
+      , currentView model
+      ]
     }
 
 
@@ -225,4 +235,4 @@ homeView =
 
 notFoundView : Html msg
 notFoundView =
-    h3 [] [ text "Oops! The page you requested was not found!" ]
+   h3 [] [ text "Oops! The page you requested was not found!" ]
