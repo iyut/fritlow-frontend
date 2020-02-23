@@ -13,34 +13,100 @@ type alias Model =
     , navKey : Nav.Key
     }
 
+logoUrl : String
+logoUrl = ""
+
 type alias Menu = 
    { title : String
    , link : String
    , slug : String 
    , parent : String
+   , active : Bool
    }
 
-logoUrl : String
-logoUrl = ""
+makeMenuActive : Menu -> Menu
+makeMenuActive menu = 
+    { menu | active = True }
+
+menuHome : Menu 
+menuHome = 
+    { title = "Home"
+    , link = "/"
+    , slug = "home"
+    , parent = ""
+    , active = False
+    }
+
+menuAbout : Menu
+menuAbout = 
+    { title = "About"
+    , link = "/about"
+    , slug = "about"
+    , parent = ""
+    , active = False
+    }
+
+menuPosts : Menu
+menuPosts =
+    { title = "Posts"
+    , link = "/posts"
+    , slug = "posts"
+    , parent = ""
+    , active = False
+    }
 
 menus : List Menu
 menus = 
-    [ { title = "Home"
-      , link = "/"
-      , slug = "home"
-      , parent = ""
-      }
-    , { title = "About"
-      , link = "/about"
-      , slug = "about"
-      , parent = ""
-      }
-    , { title = "Posts"
-      , link = "/posts"
-      , slug = "posts"
-      , parent = ""
-      }
+    [ menuHome
+    , menuAbout
+    , menuPosts
     ]
+
+currentMenuState : Model -> List Menu 
+currentMenuState model =
+    case model.route of 
+        Route.NotFound ->
+            menus
+        
+        Route.Home ->
+            let
+                activeMenu = 
+                    makeMenuActive menuHome
+            
+            in 
+                [ activeMenu, menuAbout, menuPosts ]
+        
+        Route.About ->
+            let
+                activeMenu = 
+                    makeMenuActive menuAbout
+            
+            in 
+                [ menuHome, activeMenu, menuPosts ]
+
+        Route.Posts ->
+            let
+                activeMenu = 
+                    makeMenuActive menuPosts
+            
+            in 
+                [ menuHome, menuAbout, activeMenu ]
+        
+        Route.Post postId ->
+            let
+                activeMenu = 
+                    makeMenuActive menuPosts
+            
+            in 
+                [ menuHome, menuAbout, activeMenu ]
+        
+        Route.NewPost ->
+            let
+                activeMenu = 
+                    makeMenuActive menuPosts
+            
+            in 
+                [ menuHome, menuAbout, activeMenu ]
 
 
 -- UPDATE 
@@ -72,20 +138,25 @@ viewNav model =
       , viewMenu model
       ]
 
-viewMenu : Model -> Html msg 
-viewMenu model = 
-   
-   div [ class "nav-menu", id "nav-menu"] 
-      [ ul [ class "nav-menu-list", id "nav-menu-list" ] 
-         ( List.map viewMenuList menus )
-      ]
+viewMenu : Model -> Html msg
+viewMenu model =
+    div [ class "nav-menu", id "nav-menu"] 
+        [ ul [ class "nav-menu-list", id "nav-menu-list" ] 
+            ( List.map ( \x -> viewMenuList model x ) menus )
+        ]
 
-viewMenuList : Menu -> Html msg 
-viewMenuList menu = 
-   let
-       liClass = "menu-" ++ menu.slug
-       linkClass = "menu-link-" ++ menu.slug
-   in
+
+viewMenuList : Model -> Menu -> Html msg
+viewMenuList model menu = 
+    let
+        liClass =
+            if Route.routeToString model.route == menu.link || String.contains ( menu.link ++ "/" ) ( Route.routeToString model.route ) then
+                "menuli menu-" ++ menu.slug ++ " " ++ "active-menu"
+            else
+                "menuli menu-" ++ menu.slug
+
+        linkClass = "menu-link menu-link-" ++ menu.slug
+    in
         li [ class liClass ] 
             [ a [ href menu.link, class linkClass ]
                 [ text menu.title ]

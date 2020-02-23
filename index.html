@@ -7840,38 +7840,43 @@ var $author$project$Template$Header$viewLogo = function (logo) {
 			]));
 };
 var $elm$html$Html$span = _VirtualDom_node('span');
+var $author$project$Template$Header$menuAbout = {active: false, link: '/about', parent: '', slug: 'about', title: 'About'};
+var $author$project$Template$Header$menuHome = {active: false, link: '/', parent: '', slug: 'home', title: 'Home'};
+var $author$project$Template$Header$menuPosts = {active: false, link: '/posts', parent: '', slug: 'posts', title: 'Posts'};
 var $author$project$Template$Header$menus = _List_fromArray(
-	[
-		{link: '/', parent: '', slug: 'home', title: 'Home'},
-		{link: '/about', parent: '', slug: 'about', title: 'About'},
-		{link: '/posts', parent: '', slug: 'posts', title: 'Posts'}
-	]);
+	[$author$project$Template$Header$menuHome, $author$project$Template$Header$menuAbout, $author$project$Template$Header$menuPosts]);
 var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $elm$html$Html$li = _VirtualDom_node('li');
-var $author$project$Template$Header$viewMenuList = function (menu) {
-	var linkClass = 'menu-link-' + menu.slug;
-	var liClass = 'menu-' + menu.slug;
-	return A2(
-		$elm$html$Html$li,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class(liClass)
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$a,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$href(menu.link),
-						$elm$html$Html$Attributes$class(linkClass)
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(menu.title)
-					]))
-			]));
-};
+var $author$project$Template$Header$viewMenuList = F2(
+	function (model, menu) {
+		var linkClass = 'menu-link menu-link-' + menu.slug;
+		var liClass = (_Utils_eq(
+			$author$project$Route$routeToString(model.route),
+			menu.link) || A2(
+			$elm$core$String$contains,
+			menu.link + '/',
+			$author$project$Route$routeToString(model.route))) ? ('menuli menu-' + (menu.slug + (' ' + 'active-menu'))) : ('menuli menu-' + menu.slug);
+		return A2(
+			$elm$html$Html$li,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(liClass)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$href(menu.link),
+							$elm$html$Html$Attributes$class(linkClass)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(menu.title)
+						]))
+				]));
+	});
 var $author$project$Template$Header$viewMenu = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -7889,7 +7894,12 @@ var $author$project$Template$Header$viewMenu = function (model) {
 						$elm$html$Html$Attributes$class('nav-menu-list'),
 						$elm$html$Html$Attributes$id('nav-menu-list')
 					]),
-				A2($elm$core$List$map, $author$project$Template$Header$viewMenuList, $author$project$Template$Header$menus))
+				A2(
+					$elm$core$List$map,
+					function (x) {
+						return A2($author$project$Template$Header$viewMenuList, model, x);
+					},
+					$author$project$Template$Header$menus))
 			]));
 };
 var $author$project$Template$Header$viewNav = function (model) {

@@ -110,7 +110,6 @@ initCurrentPage ( model, existingCmds ) =
 
 
 
-
 -- UPDATE 
 
 type Msg
@@ -194,38 +193,37 @@ view model =
             , navKey = model.navKey
             }
     in
-    
-    { title = "Post App"
-    , body = 
-      [ Header.view headerModel 
-      , currentView model
-      ]
-    }
+        { title = "Post App"
+        , body = 
+        [ Header.view headerModel 
+        , currentView model
+        ]
+        }
 
 
 currentView : Model -> Html Msg
 currentView model =
-   case model.page of
-      NotFoundPage ->
-         notFoundView
+    case model.page of
+        NotFoundPage ->
+            notFoundView
 
-      HomePage ->
-         homeView 
+        HomePage ->
+            homeView 
       
-      AboutPage pageModel ->
-         About.view pageModel
+        AboutPage pageModel ->
+            About.view pageModel
 
-      ListPage pageModel ->
-         ListPosts.view pageModel
-            |> Html.map ListPageMsg
+        ListPage pageModel ->
+            ListPosts.view pageModel
+                |> Html.map ListPageMsg
       
-      EditPage pageModel ->
-         EditPost.view pageModel
-            |> Html.map EditPageMsg
+        EditPage pageModel ->
+            EditPost.view pageModel
+                |> Html.map EditPageMsg
       
-      NewPage pageModel ->
-         NewPost.view pageModel
-            |> Html.map NewPageMsg
+        NewPage pageModel ->
+            NewPost.view pageModel
+                |> Html.map NewPageMsg
       
 
 
