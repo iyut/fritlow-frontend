@@ -7926,6 +7926,88 @@ var $author$project$Template$Header$viewNav = function (model) {
 				$author$project$Template$Header$viewMenu(model)
 			]));
 };
+var $author$project$Template$Header$viewRightNav = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('nav-mini'),
+				$elm$html$Html$Attributes$id('nav-mini')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$ul,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('nav-mini-list'),
+						$elm$html$Html$Attributes$id('nav-mini-list')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$li,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('nav-mini-li'),
+								$elm$html$Html$Attributes$id('nav-mini-li-account')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$span,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('nav-mini-li-span')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('My Account')
+									]))
+							])),
+						A2(
+						$elm$html$Html$li,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('nav-mini-li'),
+								$elm$html$Html$Attributes$id('nav-mini-li-wishlist')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$span,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('nav-mini-li-span')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Wishlist')
+									]))
+							])),
+						A2(
+						$elm$html$Html$li,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('nav-mini-li'),
+								$elm$html$Html$Attributes$id('nav-mini-li-cart')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$span,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('nav-mini-li-span')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Cart')
+									]))
+							]))
+					]))
+			]));
+};
 var $author$project$Template$Header$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -7937,7 +8019,8 @@ var $author$project$Template$Header$view = function (model) {
 		_List_fromArray(
 			[
 				$author$project$Template$Header$viewLogo($author$project$Template$Header$logoUrl),
-				$author$project$Template$Header$viewNav(model)
+				$author$project$Template$Header$viewNav(model),
+				$author$project$Template$Header$viewRightNav(model)
 			]));
 };
 var $author$project$Main$view = function (model) {

@@ -119,6 +119,7 @@ view model =
    div [ class "header-container", id "header-container" ] 
       [ viewLogo logoUrl
       , viewNav model
+      , viewRightNav model
       ]
 
 viewLogo : String -> Html msg 
@@ -161,3 +162,19 @@ viewMenuList model menu =
             [ a [ href menu.link, class linkClass ]
                 [ text menu.title ]
             ]
+
+viewRightNav : Model -> Html msg 
+viewRightNav model = 
+    div [ class "nav-mini", id "nav-mini" ]
+        [ ul [ class "nav-mini-list", id "nav-mini-list" ]
+            [ li [ class "nav-mini-li", id "nav-mini-li-account" ]
+                [ span [ class "nav-mini-li-span" ] [ text "My Account" ] 
+                ]
+            , li [ class "nav-mini-li", id "nav-mini-li-wishlist" ]
+                [ span [ class "nav-mini-li-span" ] [ text "Wishlist" ] 
+                ]
+            , li [ class "nav-mini-li", id "nav-mini-li-cart" ]
+                [ span [ class "nav-mini-li-span" ] [ text "Cart" ] 
+                ]
+            ]
+        ]
